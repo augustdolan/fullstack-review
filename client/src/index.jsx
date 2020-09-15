@@ -4,18 +4,27 @@ import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       repos: []
     }
 
   }
 
   search (term) {
-    console.log(`${term} was searched`);
-    // TODO
+  console.log(`${term} was searched`);
+  $.ajax({
+    type: "POST",
+    url: '/repos',
+    data: JSON.stringify({username: term}),
+    success: function(err, result) {
+      console.log(err, result);
+    },
+    contentType: 'application/json'
+  });
   }
 
   render () {
