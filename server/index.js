@@ -15,10 +15,15 @@ app.post('/repos', function (req, res) {
   // save the repo information in the database
   helpers.getReposByUsername(req, res)
     .then((reposData) => {
-      console.log('get repos is running')
-      // console.log(reposData);
-      db.save();
-      res.send('got it');
+      let dbInfo = reposData.map((repo) => {
+        const {id, full_name, html_url, created_at, forks_count, stargazers_count} = repo;
+
+        return {id, full_name, html_url, created_at, forks_count, stargazers_count}
+      })
+      db.save(dbInfo)
+        .then(() => {
+          res.send('got it');
+        })
     })
     .catch((errMessage) => {
       res.send(errMessage);
@@ -28,7 +33,11 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
-
+  db.getTopRepos()
+    .then((repos) => {
+      console.log('this is repos from get controller: ', repos)
+      res.status(200).json(repos);
+    })
 });
 
 let port = 1128;

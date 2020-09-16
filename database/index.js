@@ -22,26 +22,28 @@ let Repo = mongoose.model('Repo', repoSchema);
 //   //
 // });
 
+let getTopRepos = () => {
+  return new Promise((resolve, reject) => {
+    Repo.find().sort({'forks_count': -1}).lean()
+      .then((results) => {
+        resolve(results);
+      })
+      .catch((err) => {
+        reject(results);
+      })
+  })
+};
+
 let save = (repos) => {
-  // TODO: Your code here
-  // console.log('save is running', Repo.findOne, Repo.insertMany)
-  // This function should save a repo or repos to
-  // the MongoDB
-  Repo.find({}, null, {lean: true})
-    .then((results) => {
-      console.log(results);
+  repos.forEach((repo) => {
+    Repo.findOne({id: repo.id})
+      .then((result) => {
+        if (result) {
+        } else {
+          Repo.insertMany(repo)
+      }
     })
-    // .then((results) => {
-    //   // console.log('mongoose method is running');
-    //   console.log(results.forEach((result) => {
-    //     console.log('oppsy daisy', result);
-    //   }))
-    // })
-//   Repo.find()
-//     .then((results) => {
-//       // console.log('hello world', results);
-//     })
-
-}
-
+  })
+};
 module.exports.save = save;
+module.exports.getTopRepos = getTopRepos;
